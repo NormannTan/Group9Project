@@ -1,5 +1,6 @@
 import string
 
+
 # List of "unimportant" words (feel free to add more)
 skip_words = ['a', 'about', 'all', 'an', 'another', 'any', 'around', 'at',
               'bad', 'beautiful', 'been', 'better', 'big', 'can', 'every', 'for',
@@ -27,7 +28,33 @@ def filter_words(words, skip_words):
     ['go', 'passage', 'south']
 
     """
-    return [e for e in words if e not in skip_words]
+    filtered = []
+    for word in words:
+        if word not in skip_words and word is not '':
+            filtered.append(word)
+    
+    return filtered
+    
+def remove_spaces(text):
+    """This function is used to remove leading and trailing spaces from a string.
+    It takes a string and returns a new string with does not have leading and
+    trailing spaces. For example:
+
+    >>> remove_spaces("  Hello!  ")
+    'Hello!'
+    >>> remove_spaces("  Python  is  easy!   ")
+    'Python  is  easy!'
+    >>> remove_spaces("Python is easy!")
+    'Python is easy!'
+    >>> remove_spaces("")
+    ''
+    >>> remove_spaces("   ")
+    ''
+    """
+    
+    text= text.strip()
+
+    return text
 
     
 def remove_punct(text):
@@ -43,10 +70,14 @@ def remove_punct(text):
     >>> remove_punct(",go!So.?uTh")
     'goSouTh'
     """
-    no_punct = ""
-    for char in text:
-        if not (char in string.punctuation):
-            no_punct = no_punct + char
+    # no_punct = ""
+    # for char in text:
+        # if not (char in string.punctuation):
+            # no_punct = no_punct + char
+    normal = "".join(c for c in text if c not in ('-','!','.',':',',','?','~'))
+
+    no_punct = normal
+    
 
     return no_punct
 
@@ -77,8 +108,18 @@ def normalise_input(user_input):
 
     """
     # Remove punctuation and convert to lower case
-    no_punct = remove_punct(user_input).lower()
-    # Remove whitespace
-    no_whitespace = no_punct.strip()
-    # Filter and return unimportant words
-    return filter_words(no_whitespace.split(), skip_words)
+    
+    user_input = remove_punct(remove_spaces(user_input))
+    user_input = filter_words(user_input.lower().split(" "), skip_words)
+    
+    
+   
+    return user_input
+    
+    
+    
+    ###Original Statement: no_punct = remove_punct(user_input).lower()
+
+    #
+    # COMPLETE ME!
+    #
