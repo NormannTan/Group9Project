@@ -11,7 +11,7 @@ from map import rooms
 inventory = []
 
 # Room the player is currently in
-current_room = []
+current_room = rooms["Intro"]
 
 # Win/Lose
 victory = False
