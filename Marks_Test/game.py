@@ -71,8 +71,11 @@ def print_inventory_items(items):
 
     """
     
-    
-    print("You have " + list_of_items(items) + ".\n")
+    if list_of_items(items) == "":
+        pass
+        
+    else:
+        print("You have " + list_of_items(items) + ".\n")
     
 
 
@@ -123,17 +126,17 @@ def print_room(room):
     Note: <BLANKLINE> here means that doctest should expect a blank line.
     """
     # Display room name
-    print("")
+    print ("\n\n")
+    print("----------------------------------------------------------")
     print(room["name"].upper())
+    print("----------------------------------------------------------")
     print("")
     # Display room description
     print(room["description"])
     print("")
     print_room_items(room)
-    #
-    # COMPLETE ME!
-    #
-
+    
+    
 def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
     exit taken from this dictionary). It returns the name of the room into which
@@ -195,6 +198,7 @@ def print_menu(exits, room_items, inv_items):
     What do you want to do?
 
     """
+    print("######################")
     print("You can:")
     # Iterate over available exits
     for direction in exits:
@@ -211,7 +215,7 @@ def print_menu(exits, room_items, inv_items):
     # COMPLETE ME!
     #
     
-    print("What do you want to do?")
+    print("\nWhat do you want to do?\n")
 
 
 def is_valid_exit(exits, chosen_exit):
@@ -314,7 +318,7 @@ def execute_command(command):
             print("Drop what?")
 
     else:
-        print("This makes no sense.")
+        print("\nThis makes no sense.")
 
 
 def menu(exits, room_items, inv_items):

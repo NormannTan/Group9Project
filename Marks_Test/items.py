@@ -1,51 +1,51 @@
-item_id = {
-    "id": "id",
+# item_id = {
+    # "id": "id",
 
-    "name": "id card",
+    # "name": "id card",
 
-    "description":
-    """Your new shiny student ID card. Expires 1 June 2017.
-You wonder why they have printed a suicide hotline number on it?..."""
-}
+    # "description":
+    # """Your new shiny student ID card. Expires 1 June 2017.
+# You wonder why they have printed a suicide hotline number on it?..."""
+# }
 
-item_laptop = {
-    "id": "laptop",
+item_wallet = {
+    "id": "wallet",
 
-    "name": "laptop",
-
-    "description":
-    "It has seen better days. At least it has a WiFi card!"
-}
-
-item_money = {
-    "id": "money",
-
-    "name": "money",
+    "name": "a wallet",
 
     "description":
-    "This wad of cash is barely enough to pay your tuition fees."
+    "Tatty, old, and completely devoid of cash, it's your wallet alright."
 }
 
-item_biscuits = {
-    "id": "biscuits",
+item_phone = {
+    "id": "phone",
 
-    "name": "a pack of biscuits",
+    "name": "a phone",
 
-    "description": "A pack of biscuits."
+    "description":
+    "The battery is dead, but its all in one piece."
 }
 
-item_pen = {
-    "id": "pen",
+item_keys = {
+    "id": "keys",
+
+    "name": "a set of keys",
+
+    "description": "These will let you back in your home. If you have already found your phone and wallet, maybe you should call it a night."
+}
+
+# item_pen = {
+    # "id": "pen",
     
-    "name": "a pen",
+    # "name": "a pen",
 
-    "description": "A basic ballpoint pen."
-}
+    # "description": "A basic ballpoint pen."
+# }
 
-item_handbook = {
-    "id": "handbook",
+# item_handbook = {
+    # "id": "handbook",
     
-    "name": "a student handbook",
+    # "name": "a student handbook",
 
-    "description": "This student handbook explains everything. Seriously."
-}
+    # "description": "This student handbook explains everything. Seriously."
+# }
