@@ -359,6 +359,12 @@ def move(exits, direction):
     return rooms[exits[direction]]
 
 
+def win_conditions():
+    if rooms["House"]["items"]==[item_keys]:
+        return True
+    else:
+        return False
+
 # This is the entry point of our program
 def main():
        
@@ -373,6 +379,9 @@ def main():
 
         # Execute the player's command
         execute_command(command)
+        if win_conditions():
+            print("You win")
+            break 
 
 
 
