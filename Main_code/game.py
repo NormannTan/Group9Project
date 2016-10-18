@@ -4,8 +4,7 @@ from map import rooms
 from player import *
 from items import *
 from gameparser import *
-from Riddle_idea import *
-
+from riddle import *
 
 
 def list_of_items(items):
@@ -28,7 +27,7 @@ def list_of_items(items):
     string = []
     for item in items:
         string.append(item["name"])
-        
+
     return ", ".join(string)
 
 
@@ -71,13 +70,13 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-    
+
     if list_of_items(items) == "":
         pass
-        
+
     else:
         print("You have " + list_of_items(items) + ".\n")
-    
+
 
 
 def print_room(room):
@@ -129,15 +128,15 @@ def print_room(room):
     # Display room name
     print ("\n\n")
     print("----------------------------------------------------------")
-    print(room["name"].upper())
+    print(room["title"])
     print("----------------------------------------------------------")
     print("")
     # Display room description
     print(room["description"])
     print("")
     print_room_items(room)
-    
-    
+
+
 def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
     exit taken from this dictionary). It returns the name of the room into which
@@ -207,11 +206,11 @@ def print_menu(exits, room_items, inv_items):
         print_exit(direction, exit_leads_to(exits, direction))
     for item in room_items:
         print("TAKE " + item["id"] + " to take " + item["name"] + ".")
-    
+
     for item in inv_items:
         print("DROP " + item["id"] + " to drop " + item["name"] + ".")
-    
-    
+
+
     print("\nWhat do you want to do?\n")
 
 
@@ -242,10 +241,10 @@ def execute_go(direction):
     """
     global current_room
     exits = current_room["exits"]
-    
+
     if is_valid_exit(exits, direction) == True:
         current_room = move(exits, direction)
-        
+
     else:
         print("You cannot go there")
 
@@ -256,15 +255,15 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    
+
     for item in current_room["items"]:
         if item["id"] == item_id:
             inventory.append(item)
             current_room["items"].remove(item)
             return
-            
+
     # Need to remove item from room once in inv
-    
+
     print("You cannot take that.")
 
 def execute_drop(item_id):
@@ -278,12 +277,12 @@ def execute_drop(item_id):
             inventory.remove(item)
             current_room["items"].append(item)
             return
-            
+
     # Need to add item to room once removed from inv
-    
+
     print("You cannot drop that.")
-    
-    
+
+
 
 def execute_command(command):
     """This function takes a command (a list of words as returned by
@@ -356,27 +355,20 @@ def move(exits, direction):
     return rooms[exits[direction]]
 
 
-def pin_code():
-	global attempt
-	attempt= input(str("What is you Pin ? "))
-	return attempt
-
-
 def win_conditions():
 
 	if item_keys in inventory and current_room==rooms["House"]:
 		print("You unlock the front door, and now you are heading to your room....")
 		print("But you need a pin code to go inside of your room..")
-		while True: 
+		while True:
 			attempt = (input("What is your pin code?"))
 
 			if attempt.isalpha():
-
 				if attempt == "exit":
 					return False
 				else:
 					print("Please enter a numeric value")
-				
+
 			else:
 				if int(attempt) == 946:
 					print("That is the correct code, your door unlocks and you collapse onto your bed.")
@@ -384,43 +376,75 @@ def win_conditions():
 				else:
 					print("That is incorrect")
 
-	
+
 
 # This is the entry point of our program
 def main():
-    global current_room    
-    
+    global current_room
+
     # Main game loop
     while True:
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
-        
-        if current_room['name'] == 'The_Old_Green_Tree':
+
+        #Riddles
+        if current_room['name'] == '"The Old Green Tree"':
             riddle_OGT()
-    
-        if current_room['name'] == 'The_Fat_Angel':
+
+        if current_room['name'] == '"The Fat Angel"':
             riddle_TFA()
-        
-        if current_room['name'] == 'The_Winchester':
+
+        if current_room['name'] == '"The Winchester"':
             riddle_Winchester()
+
+        # Victory conditions
+        if item_keys in inventory and current_room['name'] == 'Your House':
+            victory = win_conditions()
+            if victory:
+                print( """
+
+      ***** *    **                                    ***** *    **   ***
+   ******  *  *****                                 ******  *  *****    ***     *
+  **   *  *     *****                              **   *  *     *****   ***   ***
+ *    *  **     * **                              *    *  **     * **      **   *
+     *  ***     *        ****    **   ****            *  ***     *         **
+    **   **     *       * ***  *  **    ***  *       **   **     *         ** ***     ***  ****
+    **   **     *      *   ****   **     ****        **   **     *         **  ***     **** **** *
+    **   **     *     **    **    **      **         **   **     *         **   **      **   ****
+    **   **     *     **    **    **      **         **   **     *         **   **      **    **
+    **   **     *     **    **    **      **         **   **     *         **   **      **    **
+     **  **     *     **    **    **      **          **  **     *         **   **      **    **
+      ** *      *     **    **    **      **           ** *      *         *    **      **    **
+       ***      *      ******      ******* **           ***      ***      *     **      **    **
+        *********       ****        *****   **           ******** ********      *** *   ***   ***
+          **** ***                                         ****     ****         ***     ***   ***
+                ***
+    ********     ***
+  *************  **
+ *           ****
+
+                """)
+                break
+            elif not victory:
+            	print("""
+M""MMMM""M                      M""MMMMMMMM
+M. `MM' .M                      M  MMMMMMMM
+MM.    .MM .d8888b. dP    dP    M  MMMMMMMM .d8888b. .d8888b. .d8888b.
+MMMb  dMMM 88'  `88 88    88    M  MMMMMMMM 88'  `88 Y8ooooo. 88ooood8
+MMMM  MMMM 88.  .88 88.  .88    M  MMMMMMMM 88.  .88       88 88.  ...
+MMMM  MMMM `88888P' `88888P'    M         M `88888P' `88888P' `88888P'
+MMMMMMMMMM                      MMMMMMMMMMM
+
+                """)
+            	break
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
 
         # Execute the player's command
         execute_command(command)
-        if win_conditions():
-            print( " \   /  __           \      /\      / | |\  |   " )
-            print( "  \ /  |  | |  |      \    /  \    /  | | \ |   " )
-            print( "   |   |  | |  |       \  /    \  /   | |  \|   " )
-            print( "   |   |__| |__|        \/      \/    | |   |   " )
-            print( " ")
-            break 
-        elif win_conditions() == False:
-        	print("YOU'VE LOST")
-        	break
-        
+
 
 
 
@@ -429,4 +453,3 @@ def main():
 # See https://docs.python.org/3.4/library/__main__.html for explanation
 if __name__ == "__main__":
     main()
-
