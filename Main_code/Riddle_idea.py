@@ -1,6 +1,7 @@
 from map import rooms
 from items import *
 from gameparser import *
+from random import randint
 
 """
 
@@ -18,10 +19,14 @@ Also to be added:
 					-Safe code puzzle
 					-Clue for next puzzle
 
-					"""
 
 
-def riddle_OGT(rooms)
+"""
+
+
+
+
+def riddle_OGT(room):
 	if room['name'] == 'room_The_Old_Green_Tree':
 		answer == input("I don't have eyes, but once I did see. Once I had thoughts, but now I'm white and empty.")
 		filter_words()
@@ -32,6 +37,8 @@ def riddle_OGT(rooms)
 		else:
 			print('Think more halloween!')
 			riddle_OGT()
+
+
 
 """
 
@@ -54,7 +61,7 @@ Also to be added:
 """
 
 
-def riddle_TFA
+def riddle_TFA(room):
 	if room['name'] == 'room_The_Fat_Angel':
 		print("I am the first on Earth,")
 		print("The second in Heaven,")
@@ -75,8 +82,39 @@ def riddle_TFA
 
 ############
 Riddle Three
-############
+###########
 
+"""
+def riddle_Winchester():
+	rand = randint(0, 10)
+
+
+	print("Guess the number between 0 and 100,000!")
+	while True:
+		answer = input()
+		try:
+			val = int(answer)
+		except ValueError:
+			print("you must enter an integer")
+			continue
+		else:
+			if (val == rand):
+				print ("Correct")
+				input("press any key")
+			elif (val < rand):
+				print("Higher")
+			elif (val > rand):
+				print("Lower")
+			else:
+				print("Try again!")
+
+def main():
+	riddle_Winchester()
+
+
+if __name__ == "__main__":
+    main()
+"""
 
 ###########
 Puzzle Four
@@ -89,18 +127,4 @@ Still to be decided:
 					-Further puzzles
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 """
-
