@@ -4,6 +4,7 @@ from map import rooms
 from player import *
 from items import *
 from gameparser import *
+from Riddle_idea import *
 
 
 
@@ -387,12 +388,22 @@ def win_conditions():
 
 # This is the entry point of our program
 def main():
-       
+    global current_room    
+    
     # Main game loop
     while True:
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
+        
+        if current_room['name'] == 'The_Old_Green_Tree':
+            riddle_OGT()
+    
+        if current_room['name'] == 'The_Fat_Angel':
+            riddle_TFA()
+        
+        if current_room['name'] == 'The_Winchester':
+            riddle_Winchester()
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
