@@ -211,10 +211,6 @@ def print_menu(exits, room_items, inv_items):
         print("DROP " + item["id"] + " to drop " + item["name"] + ".")
     
     
-    #
-    # COMPLETE ME!
-    #
-    
     print("\nWhat do you want to do?\n")
 
 
@@ -359,11 +355,35 @@ def move(exits, direction):
     return rooms[exits[direction]]
 
 
+def pin_code():
+	global attempt
+	attempt= input(str("What is you Pin ? "))
+	return attempt
+
+
 def win_conditions():
-    if rooms["House"]["items"]==[item_keys]:
-        return True
-    else:
-        return False
+
+	if item_keys in inventory and current_room==rooms["House"]:
+		print("You unlock the front door, and now you are heading to your room....")
+		print("But you need a pin code to go inside of your room..")
+		while True: 
+			attempt = (input("What is your pin code?"))
+
+			if attempt.isalpha():
+
+				if attempt == "exit":
+					return False
+				else:
+					print("Please enter a numeric value")
+				
+			else:
+				if int(attempt) == 946:
+					print("That is the correct code, your door unlocks and you collapse onto your bed.")
+					return True
+				else:
+					print("That is incorrect")
+
+	
 
 # This is the entry point of our program
 def main():
@@ -380,8 +400,16 @@ def main():
         # Execute the player's command
         execute_command(command)
         if win_conditions():
-            print("You win")
+            print( " \   /  __           \      /\      / | |\  |   " )
+            print( "  \ /  |  | |  |      \    /  \    /  | | \ |   " )
+            print( "   |   |  | |  |       \  /    \  /   | |  \|   " )
+            print( "   |   |__| |__|        \/      \/    | |   |   " )
+            print( " ")
             break 
+        elif win_conditions() == False:
+        	print("YOU'VE LOST")
+        	break
+        
 
 
 
