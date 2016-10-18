@@ -90,27 +90,23 @@ def riddle_Winchester():
 
 
 	print("Guess the number between 0 and 100,000!")
-		
-
 	while True:
-		while True:
-			try:
-				answer = int(input())
-				break
-			except ValueError:
-				print("you must enter an integer")
-				continue
-		if (answer == rand):
-			print ("Correct")
-			break
-		elif (answer < rand):
-			print("Higher")
-		elif (answer > rand):
-			print("Lower")
+		answer = input()
+		try:
+			val = int(answer)
+		except ValueError:
+			print("you must enter an integer")
+			continue
 		else:
-			print("Try again!")
-
-
+			if (val == rand):
+				print ("Correct")
+				input("press any key")
+			elif (val < rand):
+				print("Higher")
+			elif (val > rand):
+				print("Lower")
+			else:
+				print("Try again!")
 
 def main():
 	riddle_Winchester()
