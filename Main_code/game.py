@@ -376,19 +376,16 @@ def move(exits, direction):
 
 
 def win_conditions():
-
+    i = 0
     if item_keys in inventory and current_room==rooms["House"]:
         print("You unlock the front door, and now you are heading to your room....")
         print("But you need a pin code to go inside of your room..")
 
         while True:
-            attempt = input(str("What is your pin code?"))
-            attempt = str(attempt)
+            print("What is your pin code?\n")
+            attempt = raw_input(str("> "))
             if attempt.isalpha():
-                if attempt == "exit":
-                    return False
-                else:
-                    print("Please enter a numeric value")
+                print("Please enter a numeric value\n")
 
             else:
                 global pin_number
@@ -396,7 +393,12 @@ def win_conditions():
                     print("That is the correct code, your door unlocks and you collapse onto your bed.")
                     return True
                 else:
-                    print("That is incorrect")
+                    print("That is incorrect\n")
+                    i = i + 1
+                    
+                    if i == 5:
+                        print("\n\n\n\n\n\n")
+                        return False
 
 
 def stopwatch(): # Make into class call inside exit function. to print sec, min.
