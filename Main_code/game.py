@@ -330,7 +330,7 @@ def execute_command(command):
 
     elif command[0] == "leaderboard":
         print_leaderboard()
-        
+
     elif command[0] == "dev_clear_leaderboard":
         Clear_Leaderboard()
     else:
@@ -383,8 +383,9 @@ def win_conditions():
 
         while True:
             print("What is your pin code?\n")
-            attempt = raw_input(str("> "))
-            if attempt.isalpha():
+            try:
+                attempt = int(raw_input(str("> ")))
+            except ValueError:
                 print("Please enter a numeric value\n")
 
             else:
@@ -395,7 +396,7 @@ def win_conditions():
                 else:
                     print("That is incorrect\n")
                     i = i + 1
-                    
+
                     if i == 5:
                         print("\n\n\n\n\n\n")
                         return False
@@ -426,7 +427,7 @@ def Clear_Leaderboard():
     board = board.reindex_axis(['Name', 'Time (seconds)'], axis=1)
     board.to_hdf('Times.h5', key='Timing')
     print_leaderboard()
-            
+
 def print_leaderboard():
     board = pd.read_hdf('Times.h5')
     print("\n\n")
@@ -435,36 +436,36 @@ def print_leaderboard():
     print(board)
     print("\n############################\n")
     time.sleep(5)
-    
+
 def leaderboard():
-   
+
     Index = open('Index.txt','r')  # Opens Index file
     Index_Read = Index.readlines()
     Index.close()
     i = ''.join(Index_Read)
     i = int(i)
 
-    
+
     board = pd.read_hdf('Times.h5')  # Opens Times DataFrame
     global true_seconds
     name = raw_input("\nPlease enter your name: ")
     print("\n")
-        
+
     board.loc[i] = [(name), (true_seconds)]  # Appends Users 'Name' and time 'seconds' to position 'i' in DataFrame
-    
+
     i+=1
-    
+
     Index = open('Index.txt','w')
     Index.write(str(i))  # Updates Index file with next free location
     Index.close()
-    
-    
+
+
     board = board.sort_values(['Time (seconds)'], ascending=[1])  # Orders Times in acending order
     board = board.reset_index(drop=True)  # Refreshes index to make (i = 0) - quickest, and biggest(i) slowest
-    
+
     board.to_hdf('Times.h5', key='Timing')  # Updates Times DataFrame for next run
     print_leaderboard()  # Displays leaderboard to user
-    
+
 def end():
     global running
     running = False
@@ -510,15 +511,15 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     """)
 
     time.sleep(3)
-    
+
 # Plays music, target location stated here
     pygame.init()
     pygame.mixer.init()
     pygame.display.set_mode((1,1))
-    
+
     pygame.mixer.music.load("Metaphysik.mp3")
     pygame.mixer.music.play(-1)
-    
+
     # Displays Stopwatch
     stopwatch_thread = Thread(target = stopwatch)
     stopwatch_thread.start()
@@ -528,18 +529,18 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
-        
+
         #Riddles
         global NotComplete_OGT
         if current_room['name'] == '"The Old Green Tree"' and NotComplete_OGT == True:
             riddle_OGT()
             NotComplete_OGT = False
-        
+
         global NotComplete_TFA
         if current_room['name'] == '"The Fat Angel"' and NotComplete_TFA == True:
             riddle_TFA()
             NotComplete_TFA = False
-        
+
         global NotComplete_TW
         if current_room['name'] == '"The Winchester"' and NotComplete_TW == True:
             riddle_Winchester()
@@ -576,10 +577,10 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                 print("\n\n\n\n\n")
                 end()
                 leaderboard()
-                
-        
+
+
             elif not victory:
-            	print("""
+                print("""
 M""MMMM""M                      M""MMMMMMMM
 M. `MM' .M                      M  MMMMMMMM
 MM.    .MM .d8888b. dP    dP    M  MMMMMMMM .d8888b. .d8888b. .d8888b.
@@ -589,11 +590,11 @@ MMMM  MMMM `88888P' `88888P'    M         M `88888P' `88888P' `88888P'
 MMMMMMMMMM                      MMMMMMMMMMM
 
                 """)
-            	time.sleep(3)
+                time.sleep(3)
                 print("\n\n\n\n\n")
                 end()
                 print_leaderboard()
-                
+
 
         if running == False:
             break
