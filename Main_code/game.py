@@ -1,12 +1,20 @@
-#!/usr/bin/python3
-
+import pygame
+from pygame.locals import *
 from map import rooms
 from player import *
 from items import *
 from gameparser import *
-from riddle import *
+from threading import Thread
+import os
 import time
+import sys
+import pandas as pd
+from pandas import HDFStore, DataFrame
 
+running = True
+minutes = 0
+seconds = 0
+true_seconds = 0
 
 def list_of_items(items):
     """This function takes a list of items (see items.py for the definition) and
@@ -28,7 +36,7 @@ def list_of_items(items):
     string = []
     for item in items:
         string.append(item["name"])
-
+        
     return ", ".join(string)
 
 
@@ -71,13 +79,13 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-
+    
     if list_of_items(items) == "":
         pass
-
+        
     else:
         print("You have " + list_of_items(items) + ".\n")
-
+    
 
 
 def print_room(room):
@@ -129,15 +137,15 @@ def print_room(room):
     # Display room name
     print ("\n\n")
     print("----------------------------------------------------------")
-    print(room["title"])
+    print(room["name"].upper())
     print("----------------------------------------------------------")
     print("")
     # Display room description
     print(room["description"])
     print("")
     print_room_items(room)
-
-
+    
+    
 def exit_leads_to(exits, direction):
     """This function takes a dictionary of exits and a direction (a particular
     exit taken from this dictionary). It returns the name of the room into which
@@ -207,14 +215,12 @@ def print_menu(exits, room_items, inv_items):
         print_exit(direction, exit_leads_to(exits, direction))
     for item in room_items:
         print("TAKE " + item["id"] + " to take " + item["name"] + ".")
-
+    
     for item in inv_items:
         print("DROP " + item["id"] + " to drop " + item["name"] + ".")
-
-
+    
     print("\nWhat do you want to do?\n")
-
-
+    
 def is_valid_exit(exits, chosen_exit):
     """This function checks, given a dictionary "exits" (see map.py) and
     a players's choice "chosen_exit" whether the player has chosen a valid exit.
@@ -231,8 +237,8 @@ def is_valid_exit(exits, chosen_exit):
     >>> is_valid_exit(rooms["Parking"]["exits"], "east")
     True
     """
+    
     return chosen_exit in exits
-
 
 def execute_go(direction):
     """This function, given the direction (e.g. "south") updates the current room
@@ -242,10 +248,10 @@ def execute_go(direction):
     """
     global current_room
     exits = current_room["exits"]
-
+    
     if is_valid_exit(exits, direction) == True:
         current_room = move(exits, direction)
-
+        
     else:
         print("You cannot go there")
 
@@ -256,15 +262,13 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-
+    
     for item in current_room["items"]:
         if item["id"] == item_id:
             inventory.append(item)
             current_room["items"].remove(item)
             return
-
-    # Need to remove item from room once in inv
-
+             
     print("You cannot take that.")
 
 def execute_drop(item_id):
@@ -278,13 +282,9 @@ def execute_drop(item_id):
             inventory.remove(item)
             current_room["items"].append(item)
             return
-
-    # Need to add item to room once removed from inv
-
+    
     print("You cannot drop that.")
-
-
-
+    
 def execute_command(command):
     """This function takes a command (a list of words as returned by
     normalise_input) and, depending on the type of action (the first word of
@@ -292,7 +292,7 @@ def execute_command(command):
     execute_take, or execute_drop, supplying the second word as the argument.
 
     """
-
+    
     if 0 == len(command):
         return
 
@@ -309,15 +309,26 @@ def execute_command(command):
             print("Take what?")
 
     elif command[0] == "drop":
+        global running
         if len(command) > 1:
             execute_drop(command[1])
         else:
-            print("Drop what?")
-
+           print("Drop what?")
+           
+    elif command[0] == "exit":
+        global running
+        leaderboard()
+        running = False
+        
+    elif command[0] == "leaderboard":
+        print_leaderboard()
+        
+    elif command[0] == "dev_clear_leaderboard":
+        Clear_Leaderboard()
+        
     else:
         print("\nThis makes no sense.")
-
-
+        
 def menu(exits, room_items, inv_items):
     """This function, given a dictionary of possible exits from a room, and a list
     of items found in the room and carried by the player, prints the menu of
@@ -331,14 +342,13 @@ def menu(exits, room_items, inv_items):
     print_menu(exits, room_items, inv_items)
 
     # Read player's input
-    user_input = input("> ")
+    user_input = raw_input("> ")
 
     # Normalise the input
     normalised_user_input = normalise_input(user_input)
-
+    
     return normalised_user_input
-
-
+    
 def move(exits, direction):
     """This function returns the room into which the player will move if, from a
     dictionary "exits" of avaiable exits, they choose to move towards the exit
@@ -356,138 +366,104 @@ def move(exits, direction):
     return rooms[exits[direction]]
 
 
-def win_conditions():
+def stopwatch(): # Make into class call inside exit function. to print sec, min.
+    global minutes
+    global seconds
+    global true_seconds
+    
+    while running:
+        second_formatting = ":%s"
+        if seconds < 10:
+            second_formatting = ":0%s"
+        display = ("%s" % minutes +  second_formatting % seconds)
+        os.system('title Time Elapsed: ' + (display))
+        time.sleep(0.0099)
+        seconds += 0.01
+        true_seconds += 0.01
+        if seconds == 60:
+            minutes += 1
+            seconds = 0
 
-	if item_keys in inventory and current_room==rooms["House"]:
-		print("You unlock the front door, and now you are heading to your room....")
-		print("But you need a pin code to go inside of your room..")
-		while True:
-			attempt = (input("What is your pin code?"))
+def Clear_Leaderboard():
+    board = pd.read_hdf('Times.h5')
+    board = pd.DataFrame({'Name': [],
+                            'Time (seconds)': []})
+    board = board.reindex_axis(['Name', 'Time (seconds)'], axis=1)
+    board.to_hdf('Times.h5', key='Timing')
+    print_leaderboard()
+            
+def print_leaderboard():
+    board = pd.read_hdf('Times.h5')
+    print("\n\n")
+    print("############################")
+    print("---LEADERBOARD---\n")
+    print(board)
+    print("\n############################\n")
+    time.sleep(5)
+    
+def leaderboard():
+   
+    Index = open('Index.txt','r')  # Opens Index file
+    Index_Read = Index.readlines()
+    Index.close()
+    i = ''.join(Index_Read)
+    i = int(i)
 
-			if attempt.isalpha():
-				if attempt == "exit":
-					return False
-				else:
-					print("Please enter a numeric value")
-
-			else:
-				if int(attempt) == 946:
-					print("That is the correct code, your door unlocks and you collapse onto your bed.")
-					return True
-				else:
-					print("That is incorrect")
-
-
-
+    
+    board = pd.read_hdf('Times.h5')  # Opens Times DataFrame
+    global true_seconds
+    name = raw_input("\nPlease enter your name: ")
+    print("\n")
+        
+    board.loc[i] = [(name), (true_seconds)]  # Appends Users 'Name' and time 'seconds' to position 'i' in DataFrame
+    
+    i+=1
+    
+    Index = open('Index.txt','w')
+    Index.write(str(i))  # Updates Index file with next free location
+    Index.close()
+    
+    
+    board = board.sort_values(['Time (seconds)'], ascending=[1])  # Orders Times in acending order
+    board = board.reset_index(drop=True)  # Refreshes index to make (i = 0) - quickest, and biggest(i) slowest
+    
+    board.to_hdf('Times.h5', key='Timing')  # Updates Times DataFrame for next run
+    print_leaderboard()  # Displays leaderboard to user
+    
 # This is the entry point of our program
 def main():
-    global current_room
-    print("""
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMddddmNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNho`       `--/hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN.               dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNdo``.` `.        /MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMN+`.-`-`..` ../ .-:+NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMy :Nd./::-----/./:.hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMN/./o:--:-----::-o`NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNho/-----------+-NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMNhyNMMMy/----------::sMMmhhsNMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMmhydmMMMMMNo+::::-::::/oNMMMMMNhsydMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMNdoyNMMMNNNMMMMMNhsosssydNMMMMNmMMMMMhshNMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMNdshMMMNNmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMmyhMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMNsyMMMNNMMMMMMMMMMMNNNNMNNNNNNMMMMMMMMMMMMMMdomMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMM/mMMNmMNmmmmNNmmmdso+oo++osyhdmmNNNNNNMMMMMMMNomMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMN/mMMNddhs+/////////////////////+++++oossymNNMMMM/MMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMM+yMMdhh+o+os///////////////////////////////+dNmMMN/dMMMMMMMMMMMMMM
-MMMMMMMMMMMMMN+MMNo+o+/oo/////sss+////////////oy///////////soyMMsMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMysMm+/y-+y///////y--y//////////+h/.sy////////////+dmdNNMMMMMMMMMMMM
-MMMMMMMMMMMNdsyyooh`/o///////o:..-y+///////+s+..-y////////////yshysshNMMMMMMMMMM
-MMMMMMMMMMmyssss+s:.y///////os://:+o///////ys://:/o///////////yshsssshMMMMMMMMMM
-MMMMMMMMMMysssssoo`+h////////+ossss////////+ssssso////////////oyyssssyNMMMMMMMMM
-MMMMMMMMMNsssssso+ oh//////////////o+//////o///////////////////+yssssyNMMMMMMMMM
-MMMMMMMMMMysssssos.:h///+///////oo+`-++o++:.:os+/////+////////+hossssyNMMMMMMMMM
-MMMMMMMMMMhsssss+ss s///do:/+syo/`...........`-osso/:oy+//////yodsssshMMMMMMMMMM
-MMMMMMMMMMNyssshyyoo`so//o+/``...`:o+-`..-/+/-...` :+o+///////hsNhssyNMMMMMMMMMM
-MMMMMMMMMMMNmmNMdm++s:/y///+o+:-o++//+soso//+oo/:+++////////+dmMMMNmNMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMNmy/+s+os/////////////////////////////////smMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMNds+/////////////////////////////////+sdNMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMNNdhhooooooo/////////////shsssssyydmNNMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMNNmmmmNmmmysossssshdmmNNmmNNNMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNmNmmmmNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-
-    """)
-
-    time.sleep(3)
-
+    # Plays music, target location stated here
+    pygame.init()
+    pygame.mixer.init()
+    pygame.display.set_mode((1,1))
+    
+    pygame.mixer.music.load("Metaphysik.mp3")
+    #pygame.mixer.music.play(-1)
+    
+    # Displays Stopwatch
+    stopwatch_thread = Thread(target = stopwatch)
+    stopwatch_thread.start()
+    
     # Main game loop
-    while True:
+    while running:
+               
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
-
-        #Riddles
-        if current_room['name'] == '"The Old Green Tree"':
-            riddle_OGT()
-
-        if current_room['name'] == '"The Fat Angel"':
-            riddle_TFA()
-
-        if current_room['name'] == '"The Winchester"':
-            riddle_Winchester()
-
-        # Victory conditions
-        if item_keys in inventory and current_room['name'] == 'Your House':
-            victory = win_conditions()
-            if victory:
-                print( """
-
-      ***** *    **                                    ***** *    **   ***
-   ******  *  *****                                 ******  *  *****    ***     *
-  **   *  *     *****                              **   *  *     *****   ***   ***
- *    *  **     * **                              *    *  **     * **      **   *
-     *  ***     *        ****    **   ****            *  ***     *         **
-    **   **     *       * ***  *  **    ***  *       **   **     *         ** ***     ***  ****
-    **   **     *      *   ****   **     ****        **   **     *         **  ***     **** **** *
-    **   **     *     **    **    **      **         **   **     *         **   **      **   ****
-    **   **     *     **    **    **      **         **   **     *         **   **      **    **
-    **   **     *     **    **    **      **         **   **     *         **   **      **    **
-     **  **     *     **    **    **      **          **  **     *         **   **      **    **
-      ** *      *     **    **    **      **           ** *      *         *    **      **    **
-       ***      *      ******      ******* **           ***      ***      *     **      **    **
-        *********       ****        *****   **           ******** ********      *** *   ***   ***
-          **** ***                                         ****     ****         ***     ***   ***
-                ***
-    ********     ***
-  *************  **
- *           ****
-
-                """)
-                break
-            elif not victory:
-            	print("""
-M""MMMM""M                      M""MMMMMMMM
-M. `MM' .M                      M  MMMMMMMM
-MM.    .MM .d8888b. dP    dP    M  MMMMMMMM .d8888b. .d8888b. .d8888b.
-MMMb  dMMM 88'  `88 88    88    M  MMMMMMMM 88'  `88 Y8ooooo. 88ooood8
-MMMM  MMMM 88.  .88 88.  .88    M  MMMMMMMM 88.  .88       88 88.  ...
-MMMM  MMMM `88888P' `88888P'    M         M `88888P' `88888P' `88888P'
-MMMMMMMMMM                      MMMMMMMMMMM
-
-                """)
-            	break
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
 
         # Execute the player's command
         execute_command(command)
-
-
+        
+    stopwatch_thread.join()
 
 
 # Are we being run as a script? If so, run main().
 # '__main__' is the name of the scope in which top-level code executes.
 # See https://docs.python.org/3.4/library/__main__.html for explanation
+
 if __name__ == "__main__":
     main()
+
