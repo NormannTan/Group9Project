@@ -572,8 +572,8 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                 """)
                 time.sleep(3)
                 print("\n\n\n\n\n")
-                leaderboard()
                 end()
+                leaderboard()
                 
         
             elif not victory:
@@ -589,8 +589,9 @@ MMMMMMMMMM                      MMMMMMMMMMM
                 """)
             	time.sleep(3)
                 print("\n\n\n\n\n")
-                print_leaderboard()
                 end()
+                print_leaderboard()
+                
 
         if running == False:
             break
