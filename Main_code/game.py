@@ -462,6 +462,10 @@ def leaderboard():
     
     board.to_hdf('Times.h5', key='Timing')  # Updates Times DataFrame for next run
     print_leaderboard()  # Displays leaderboard to user
+    
+def end():
+    global running
+    running = False
 
 
 # This is the entry point of our program
@@ -511,7 +515,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     pygame.display.set_mode((1,1))
     
     pygame.mixer.music.load("Metaphysik.mp3")
-    pygame.mixer.music.play(-1)
+    #pygame.mixer.music.play(-1)
     
     # Displays Stopwatch
     stopwatch_thread = Thread(target = stopwatch)
@@ -569,7 +573,9 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
                 time.sleep(3)
                 print("\n\n\n\n\n")
                 leaderboard()
-                running = False
+                end()
+                
+        
             elif not victory:
             	print("""
 M""MMMM""M                      M""MMMMMMMM
@@ -584,13 +590,16 @@ MMMMMMMMMM                      MMMMMMMMMMM
             	time.sleep(3)
                 print("\n\n\n\n\n")
                 print_leaderboard()
-                running = False
+                end()
 
-        # Show the menu with possible actions and ask the player
-        command = menu(current_room["exits"], current_room["items"], inventory)
+        if running == False:
+            break
+        else:
+         # Show the menu with possible actions and ask the player
+            command = menu(current_room["exits"], current_room["items"], inventory)
 
-        # Execute the player's command
-        execute_command(command)
+            # Execute the player's command
+            execute_command(command)
 
 
     stopwatch_thread.join()

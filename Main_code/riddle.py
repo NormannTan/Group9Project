@@ -132,6 +132,9 @@ numberstring = str(pin_number)
 firstnumber = numberstring[0]
 secondnumber = numberstring[1]
 thirdnumber = numberstring[2]
+print(firstnumber)
+print(secondnumber)
+print(thirdnumber)
 # def main():
 
 
