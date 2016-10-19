@@ -1,21 +1,13 @@
-import pygame
-from pygame.locals import *
+#!/usr/bin/python3
+
 from map import rooms
 from player import *
 from items import *
 from gameparser import *
 from riddle import *
-from threading import Thread
-import os
 import time
-import sys
-import pandas as pd
-from pandas import HDFStore, DataFrame
 
-running = True
-minutes = 0
-seconds = 0
-true_seconds = 0
+
 def list_of_items(items):
     """This function takes a list of items (see items.py for the definition) and
     returns a comma-separated list of item names (as a string). For example:
@@ -322,16 +314,6 @@ def execute_command(command):
         else:
             print("Drop what?")
 
-    elif command[0] == "exit": #Change to victory condition
-        global running
-        leaderboard()
-        running = False
-    
-    elif command[0] == "leaderboard":
-        print_leaderboard()
-        
-    elif command[0] == "dev_clear_leaderboard":
-        Clear_Leaderboard()
     else:
         print("\nThis makes no sense.")
 
@@ -349,7 +331,7 @@ def menu(exits, room_items, inv_items):
     print_menu(exits, room_items, inv_items)
 
     # Read player's input
-    user_input = raw_input("> ")
+    user_input = input("> ")
 
     # Normalise the input
     normalised_user_input = normalise_input(user_input)
@@ -376,90 +358,25 @@ def move(exits, direction):
 
 def win_conditions():
 
-    if item_keys in inventory and current_room==rooms["House"]:
-        print("You unlock the front door, and now you are heading to your room....")
-        print("But you need a pin code to go inside of your room..")
+	if item_keys in inventory and current_room==rooms["House"]:
+		print("You unlock the front door, and now you are heading to your room....")
+		print("But you need a pin code to go inside of your room..")
+		while True:
+			attempt = (input("What is your pin code?"))
 
-        while True:
-            attempt = (input("What is your pin code?"))
+			if attempt.isalpha():
+				if attempt == "exit":
+					return False
+				else:
+					print("Please enter a numeric value")
 
-            if attempt.isalpha():
-                if attempt == "exit":
-                    return False
-                else:
-                    print("Please enter a numeric value")
+			else:
+				if int(attempt) == 946:
+					print("That is the correct code, your door unlocks and you collapse onto your bed.")
+					return True
+				else:
+					print("That is incorrect")
 
-            else:
-                if int(attempt) == 946:
-                    print("That is the correct code, your door unlocks and you collapse onto your bed.")
-                    return True
-                else:
-                    print("That is incorrect")
-
-
-def stopwatch(): # Make into class call inside exit function. to print sec, min.
-    global minutes
-    global seconds
-    global true_seconds
-
-    while running:
-        second_formatting = ":%s"
-        if seconds < 10:
-            second_formatting = ":0%s"
-        display = ("%s" % minutes +  second_formatting % seconds)
-        os.system('title Time Elapsed: ' + (display))
-        time.sleep(0.0099)
-        seconds += 0.01
-        true_seconds += 0.01
-        if seconds == 60:
-            minutes += 1
-            seconds = 0
-
-def Clear_Leaderboard():
-    board = pd.read_hdf('Times.h5')
-    board = pd.DataFrame({'Name': [],
-                            'Time (seconds)': []})
-    board = board.reindex_axis(['Name', 'Time (seconds)'], axis=1)
-    board.to_hdf('Times.h5', key='Timing')
-    print_leaderboard()
-            
-def print_leaderboard():
-    board = pd.read_hdf('Times.h5')
-    print("\n\n")
-    print("############################")
-    print("---LEADERBOARD---\n")
-    print(board)
-    print("\n############################\n")
-    time.sleep(5)
-    
-def leaderboard():
-   
-    Index = open('Index.txt','r')  # Opens Index file
-    Index_Read = Index.readlines()
-    Index.close()
-    i = ''.join(Index_Read)
-    i = int(i)
-
-    
-    board = pd.read_hdf('Times.h5')  # Opens Times DataFrame
-    global true_seconds
-    name = raw_input("\nPlease enter your name: ")
-    print("\n")
-        
-    board.loc[i] = [(name), (true_seconds)]  # Appends Users 'Name' and time 'seconds' to position 'i' in DataFrame
-    
-    i+=1
-    
-    Index = open('Index.txt','w')
-    Index.write(str(i))  # Updates Index file with next free location
-    Index.close()
-    
-    
-    board = board.sort_values(['Time (seconds)'], ascending=[1])  # Orders Times in acending order
-    board = board.reset_index(drop=True)  # Refreshes index to make (i = 0) - quickest, and biggest(i) slowest
-    
-    board.to_hdf('Times.h5', key='Timing')  # Updates Times DataFrame for next run
-    print_leaderboard()  # Displays leaderboard to user
 
 
 # This is the entry point of our program
@@ -502,36 +419,21 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     """)
 
     time.sleep(3)
-    
-# Plays music, target location stated here
-    pygame.init()
-    pygame.mixer.init()
-    pygame.display.set_mode((1,1))
-    
-    pygame.mixer.music.load("Metaphysik.mp3")
-    pygame.mixer.music.play(-1)
-    
-    # Displays Stopwatch
-    stopwatch_thread = Thread(target = stopwatch)
-    stopwatch_thread.start()
+
     # Main game loop
-    while running:
+    while True:
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
-        
-        global Complete_OGT
-        global Complete_TFA
-        global Complete_TW
 
         #Riddles
-        if current_room['name'] == '"The Old Green Tree"' and Complete_OGT == False:
+        if current_room['name'] == '"The Old Green Tree"':
             riddle_OGT()
 
-        if current_room['name'] == '"The Fat Angel"' and Complete_TFA == False:
+        if current_room['name'] == '"The Fat Angel"':
             riddle_TFA()
 
-        if current_room['name'] == '"The Winchester"' and Complete_TW == False:
+        if current_room['name'] == '"The Winchester"':
             riddle_Winchester()
 
         # Victory conditions
@@ -582,7 +484,6 @@ MMMMMMMMMM                      MMMMMMMMMMM
         execute_command(command)
 
 
-    stopwatch_thread.join()
 
 
 # Are we being run as a script? If so, run main().
