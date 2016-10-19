@@ -3,10 +3,6 @@ from items import *
 from gameparser import *
 from random import randint
 
-Complete_OGT = False
-Complete_TFA = False
-Complete_TW = False
-
 """
 
 ##########
@@ -39,9 +35,7 @@ def riddle_OGT():
     
     if answer == 'skull':
         print("Correct\n")
-        global Complete_OGT
-        Complete_OGT = True
-        return Complete_OGT
+        
     else:
         print('\nThink more halloween!\n')
         riddle_OGT()
@@ -81,10 +75,7 @@ def riddle_TFA():
     normalise_input(answer)
     if answer == 'e'or answer == 'E':
         print("\nCorrect\n")
-        global Complete_TFA
-        Complete_TFA = True
-        return Complete_OGT
-        
+                
     else:
         print("\nRead the sentence closely\n")
         riddle_TFA()
@@ -99,22 +90,19 @@ Riddle Three
 """
 def riddle_Winchester():
     rand = randint(0, 10)
-    answer = raw_input("> ")
-
     print("\nGuess the number between 0 and 100,000!\n")
     while True:
-        answer = raw_input()
+        answer = raw_input("> ")
         try:
             val = int(answer)
         except ValueError:
             print("you must enter an integer")
+            answer = raw_input("> ")
             continue
         #else:
         if (val == rand):
             print ("\nCorrect\n")
-            global Complete_TW
-            Complete_TW = True
-            return Complete_TW
+            break
         elif (val < rand):
             print("\nHigher\n")
         elif (val > rand):

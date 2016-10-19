@@ -16,6 +16,12 @@ running = True
 minutes = 0
 seconds = 0
 true_seconds = 0
+
+NotComplete_OGT = True
+NotComplete_TFA = True
+NotComplete_TW = True
+
+
 def list_of_items(items):
     """This function takes a list of items (see items.py for the definition) and
     returns a comma-separated list of item names (as a string). For example:
@@ -501,7 +507,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
     """)
 
-    time.sleep(3)
+    #time.sleep(3)
     
 # Plays music, target location stated here
     pygame.init()
@@ -520,19 +526,21 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         print_room(current_room)
         print_inventory_items(inventory)
         
-        global Complete_OGT
-        global Complete_TFA
-        global Complete_TW
-
         #Riddles
-        if current_room['name'] == '"The Old Green Tree"' and Complete_OGT == False:
+        if current_room['name'] == '"The Old Green Tree"' and NotComplete_OGT == True:
+            global NotComplete_OGT
             riddle_OGT()
+            NotComplete_OGT = False
 
-        if current_room['name'] == '"The Fat Angel"' and Complete_TFA == False:
+        if current_room['name'] == '"The Fat Angel"' and NotComplete_TFA == True:
+            global NotComplete_TFA
             riddle_TFA()
+            NotComplete_TFA = False
 
-        if current_room['name'] == '"The Winchester"' and Complete_TW == False:
+        if current_room['name'] == '"The Winchester"' and NotComplete_TW == True:
+            global NotComplete_TW
             riddle_Winchester()
+            NotComplete_TW = False
 
         # Victory conditions
         if item_keys in inventory and current_room['name'] == 'Your House':
