@@ -517,7 +517,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     pygame.display.set_mode((1,1))
     
     pygame.mixer.music.load("Metaphysik.mp3")
-    #pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1)
     
     # Displays Stopwatch
     stopwatch_thread = Thread(target = stopwatch)
