@@ -383,7 +383,7 @@ def win_conditions():
 
         while True:
             attempt = input(str("What is your pin code?"))
-
+            attempt = str(attempt)
             if attempt.isalpha():
                 if attempt == "exit":
                     return False
@@ -392,7 +392,7 @@ def win_conditions():
 
             else:
                 global pin_number
-                if int(attempt) == str(pin_number):
+                if str(attempt) == str(pin_number):
                     print("That is the correct code, your door unlocks and you collapse onto your bed.")
                     return True
                 else:
