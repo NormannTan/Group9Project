@@ -3,6 +3,10 @@ from items import *
 from gameparser import *
 from random import randint
 
+Complete_OGT = False
+Complete_TFA = False
+Complete_TW = False
+
 """
 
 ##########
@@ -30,10 +34,14 @@ def riddle_OGT():
 	# if room['name'] == 'room_The_Old_Green_Tree':
     print("\nI don't have eyes, but once I did see. Once I had thoughts, but now I'm white and empty.")
     print("What am I?\n")
-    answer = input("> ")
+    answer = raw_input("> ")
     normalise_input(answer)
+    
     if answer == 'skull':
         print("Correct\n")
+        global Complete_OGT
+        Complete_OGT = True
+        return Complete_OGT
     else:
         print('\nThink more halloween!\n')
         riddle_OGT()
@@ -69,10 +77,14 @@ def riddle_TFA():
     print("I appear two times in a week,")
     print("you can only see me once in a year, although I am in the middle to the sea.")
     print("What am i?\n")
-    answer = input("> ")
+    answer = raw_input("> ")
     normalise_input(answer)
     if answer == 'e'or answer == 'E':
         print("\nCorrect\n")
+        global Complete_TFA
+        Complete_TFA = True
+        return Complete_OGT
+        
     else:
         print("\nRead the sentence closely\n")
         riddle_TFA()
@@ -87,11 +99,11 @@ Riddle Three
 """
 def riddle_Winchester():
     rand = randint(0, 10)
-
+    answer = raw_input("> ")
 
     print("\nGuess the number between 0 and 100,000!\n")
     while True:
-        answer = input()
+        answer = raw_input()
         try:
             val = int(answer)
         except ValueError:
@@ -100,8 +112,9 @@ def riddle_Winchester():
         #else:
         if (val == rand):
             print ("\nCorrect\n")
-            user_input = input("> ")
-            return user_input
+            global Complete_TW
+            Complete_TW = True
+            return Complete_TW
         elif (val < rand):
             print("\nHigher\n")
         elif (val > rand):

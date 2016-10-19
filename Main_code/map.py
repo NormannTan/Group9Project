@@ -23,7 +23,7 @@ To the SOUTH is your house, and more importantly, a warm king-sized bed.
 
 GO SOUTH to begin your journey.
 
-(At any point, type "glossary" to see the list of available commands.)""",
+""",
 
 	"exits": {"south": "House"},
 
