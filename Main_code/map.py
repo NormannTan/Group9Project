@@ -78,7 +78,7 @@ To the EAST is the TOWN CENTRE, maybe a clue could be found there...""",
 
 room_NW_Corner_Transition = {
 
-    "name": "NW Corner",
+    "name": "North West Corner",
 
     "title": """
 .%%..%%..%%...%%.
@@ -90,7 +90,8 @@ room_NW_Corner_Transition = {
     """,
 
     "description":
-    """>>>>NW Transition<<<<""",
+    """You are in the northwestern region of Fairton.
+There is nothing much to see or do here.""",
 
     "exits": {"south": "Park", "east": "The_Old_Green_Tree"},
 
@@ -99,7 +100,7 @@ room_NW_Corner_Transition = {
 
 room_SE_Corner_Transition = {
 
-    "name": "SE Corner",
+    "name": "South East Corner",
 
     "title": """
 ..%%%%...%%%%%%.
@@ -111,9 +112,10 @@ room_SE_Corner_Transition = {
     """,
 
     "description":
-    """>>>>SE Transition<<<<""",
+    """You are in the southeastern region of Fairton.
+There is nothing much to see or do here.""",
 
-    "exits": {"North": "The_Fat_Angel", "west": "The_Winchester"},
+    "exits": {"north": "The_Fat_Angel", "west": "The_Winchester"},
 
     "items": []
 }
@@ -170,9 +172,9 @@ But that is only at the back of your mind right now.
 As you scamper to avoid an assortment of zombies, werewolves, and what looks like mummies in the distance.
 
 To the NORTH lies THE OLD GREEN TREE;
- to the WEST is the PARK;
- EAST leads to THE FAT ANGEL;
- and SOUTH will take you towards THE WINCHESTER.""",
+to the WEST is the PARK;
+EAST leads to THE FAT ANGEL;
+and SOUTH will take you towards THE WINCHESTER.""",
 
 	"exits": {"south": "The_Winchester", "east": "The_Fat_Angel", "west": "Park", "north": "The_Old_Green_Tree"},
 

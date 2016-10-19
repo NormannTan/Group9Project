@@ -328,11 +328,6 @@ def execute_command(command):
         else:
             print("Drop what?")
 
-    elif command[0] == "exit": #Change to victory condition
-        global running
-        leaderboard()
-        running = False
-    
     elif command[0] == "leaderboard":
         print_leaderboard()
         
@@ -387,7 +382,7 @@ def win_conditions():
         print("But you need a pin code to go inside of your room..")
 
         while True:
-            attempt = (input("What is your pin code?"))
+            attempt = input(str("What is your pin code?"))
 
             if attempt.isalpha():
                 if attempt == "exit":
@@ -396,7 +391,8 @@ def win_conditions():
                     print("Please enter a numeric value")
 
             else:
-                if int(attempt) == 946:
+                global pin_number
+                if int(attempt) == str(pin_number):
                     print("That is the correct code, your door unlocks and you collapse onto your bed.")
                     return True
                 else:
@@ -507,7 +503,7 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 
     """)
 
-    #time.sleep(3)
+    time.sleep(3)
     
 # Plays music, target location stated here
     pygame.init()
@@ -521,24 +517,25 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
     stopwatch_thread = Thread(target = stopwatch)
     stopwatch_thread.start()
     # Main game loop
+    global running
     while running:
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
         
         #Riddles
+        global NotComplete_OGT
         if current_room['name'] == '"The Old Green Tree"' and NotComplete_OGT == True:
-            global NotComplete_OGT
             riddle_OGT()
             NotComplete_OGT = False
-
+        
+        global NotComplete_TFA
         if current_room['name'] == '"The Fat Angel"' and NotComplete_TFA == True:
-            global NotComplete_TFA
             riddle_TFA()
             NotComplete_TFA = False
-
+        
+        global NotComplete_TW
         if current_room['name'] == '"The Winchester"' and NotComplete_TW == True:
-            global NotComplete_TW
             riddle_Winchester()
             NotComplete_TW = False
 
@@ -569,7 +566,10 @@ MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
  *           ****
 
                 """)
-                break
+                time.sleep(3)
+                print("\n\n\n\n\n")
+                leaderboard()
+                running = False
             elif not victory:
             	print("""
 M""MMMM""M                      M""MMMMMMMM
@@ -581,7 +581,10 @@ MMMM  MMMM `88888P' `88888P'    M         M `88888P' `88888P' `88888P'
 MMMMMMMMMM                      MMMMMMMMMMM
 
                 """)
-            	break
+            	time.sleep(3)
+                print("\n\n\n\n\n")
+                print_leaderboard()
+                running = False
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
